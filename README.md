@@ -1,3 +1,3 @@
 # CSE110W260T10
 
-#CSE110 Project
+#CSE110 Project for Winter 2016
