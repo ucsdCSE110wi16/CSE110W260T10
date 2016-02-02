@@ -1,41 +1,44 @@
 # CSE110W260T10
 
-Big Board
-
-
-So what exactly is our project? Are we meeting all 5 criteria?
-
-No, we’re putting sections 2-4 into one section.
-
-Title: User posts to their University Board
-
-Title: Rate my professor (LOW PRIORITY)
-
-Title: Find someone to study, play sports, date with right now (fast)
-
-Title: Find someone to play sports with at a moment’s notice
- they want focus on pickup games/workout buddies not intramural sports
-
-Title: Put yourself in a category with other users
-
-Title: User sees what people are saying in their university.
-
-Title: Dating portion (high priority)
-Customer goals:
-- Similar in design to tinder ex. swipe left/right
-         - Make your own profile with picture - should get profile from user input when you first login
-            -  Low priority- rating system for the lowest and highest counts
-            - necessary to add barebones chat function once people match
-
-
 User Stories:
-I am a student who has a test tomorrow. I want to find a study buddy to study with tonight. I am at the library and I am going to post on the app to find someone to come study with me.
-As a user, I want to be able to find people to date at my school.
-I want a way to post random things for people to comment on
-As a user, I want to be able to text or make an event that would have a title or description that will show in the activity feed
 
-Priority:
-Newsfeed (Yik Yak esque)
-Study Buddies
-Dating App!
-Sports (Pick up games)
+1)
+As a student who has a test tomorrow,
+I want to find a study buddy near me in order to help me study
+So that I can pass the class.
+
+Feature:
+The app that the customer wants will have a "Find a study buddy" section where the user will input their location and the app will
+show the profiles of people around them who are also looking for a study buddy. Once the user finds a suitable study buddy, they can
+then chat and decide on a place and time to meet up to study. This feature will allow people to find one another and meet up to 
+study together.
+
+2)
+As a UCSD student,
+I want to find others around me
+So that we can go out on a date.
+
+Feature:
+The app will also contain a dating section very similar to Tinder. The customer wants the app to be like Tinder, but for only
+UCSD students. In order to log in, the user needs a ucsd email address. This will prevent outsiders and non-students from joining
+this university-specific app. The purpose of this section of the app is for users to look at pictures of other students from UCSD
+and swipe right or left, depending whether they want to chat and go out on a date with the person or not.
+
+3)
+As a bored UCSD student,
+I want a way to post random things
+So that people can comment on them.
+
+Feature:
+
+4)
+As a user,
+I want to be able to create an event that would show up on other people's newsfeed
+So that I can spread the word on some events.
+
+Feature:
+
+5)
+
+Feature:
+
