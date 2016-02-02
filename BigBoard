@@ -1,7 +1,12 @@
-Big Board:
+Big Board/Schedule:
+
+Issues:
+  None as of yet
+
 
 Schedule
   Week 4:
+  Weekly progress meeting: 6 pm Monday in Geisel 1041
   Analyze feasiblity of client's user stories
     Work with client to decide which features enjoy priority
     Make sure that we are developing is in line with their desired product
@@ -11,6 +16,23 @@ Schedule
     Assign roles(may change as time goes on)
   
   Week 5:
+  Weekly progress meeting: 6 pm Monday in Geisel 1041
+  Schedules:
     Learn basics about Parse
     Start work on using Parse server to develop log-in page for the application
+    Formalize roles for this week
+      Maintain schedule, user stories and revise to more stringent standards (Kunal, Jahaziel)
+      Develop log in page (Davis, Raj, Kevin, Judd)
+      
+    Goal for Lab Session
+      Present log-in screen to the most esteemed clients for their feedbacl
+      
+  Week 6(tentative):
+    Weekly progress meeting: 6 pm Monday in Geisel 1041
+    Work on backend for newsfeed
+    Goal for Lab Session:
+      Present an overview of our progress
+      Remember not to be too technical in our presentation
+      
+      
   
