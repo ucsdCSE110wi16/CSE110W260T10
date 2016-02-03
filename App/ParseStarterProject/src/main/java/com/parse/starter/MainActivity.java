@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import com.parse.ParseAnalytics;
 
 
+
 public class MainActivity extends ActionBarActivity {
 
   @Override
@@ -24,6 +25,8 @@ public class MainActivity extends ActionBarActivity {
     setContentView(R.layout.activity_main);
 
     ParseAnalytics.trackAppOpenedInBackground(getIntent());
+
+
   }
 
   @Override
@@ -42,6 +45,7 @@ public class MainActivity extends ActionBarActivity {
 
     //noinspection SimplifiableIfStatement
     if (id == R.id.action_settings) {
+
       return true;
     }
 
