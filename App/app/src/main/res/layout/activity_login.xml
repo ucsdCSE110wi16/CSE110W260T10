@@ -85,7 +85,7 @@
 
     <Button
         android:id='@+id/tvRegisterLink'
-        android:layout_width="131dp"
+        android:layout_width="128dp"
         android:layout_height="wrap_content"
         android:background="#0277BD"
         android:password="false"
