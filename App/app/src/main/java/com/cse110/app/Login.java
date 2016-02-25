@@ -14,9 +14,9 @@ import android.widget.TextView;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
-    Button bLogin;
+    Button bLogin, bRegisterLink;
     EditText etUsername, etPassword;
-    TextView tvRegisterLink;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +25,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         etUsername = (EditText) findViewById(R.id.etEmail);
         etPassword = (EditText) findViewById(R.id.etPassword);
-        tvRegisterLink = (TextView) findViewById(R.id.tvRegisterLink);
+        bRegisterLink = (Button) findViewById(R.id.bRegisterLink);
 
         bLogin = (Button) findViewById(R.id.bLogin);
 
         bLogin.setOnClickListener(this);
-        tvRegisterLink.setOnClickListener(this);
+        bRegisterLink.setOnClickListener(this);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         switch (v.getId()){
             case R.id.bLogin:
                 break;
-            case R.id.tvRegisterLink:
+            case R.id.bRegisterLink:
                 startActivity(new Intent(this, Register.class));
                 break;
         }

@@ -13,7 +13,7 @@
     <!-- Login progress -->
     <TextView
         android:layout_width="wrap_content"
-        android:text="Full Name"
+        android:text="Username"
         android:layout_height="wrap_content" />
 
     <EditText
