@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:background="#62C3A6"
         android:text="Login"
-        android:textColor="#ffffff" />
+        android:textColor="#f4f4f2" />
 
     <Space
         android:layout_width="match_parent"
@@ -77,6 +77,6 @@
         android:background="#62C3A6"
         android:password="false"
         android:text="New Account"
-        android:textColor="#ffffff" />
+        android:textColor="#f4f4f2" />
 
 </LinearLayout>
