@@ -57,7 +57,7 @@
 
     <Button
         android:id="@+id/bLogin"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#dd524d"
         android:text="Login" />
@@ -70,12 +70,10 @@
 
     <Button
         android:id='@+id/tvRegisterLink'
-        android:layout_width="291dp"
+        android:layout_width="131dp"
         android:layout_height="wrap_content"
         android:background="#dd534e"
-        android:gravity="center_horizontal"
         android:password="false"
-        android:text="Register Here"
-        android:textStyle="bold" />
+        android:text="New Account" />
 
 </LinearLayout>
