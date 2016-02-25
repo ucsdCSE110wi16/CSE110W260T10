@@ -20,14 +20,9 @@
 
     <TextView
         android:layout_width="wrap_content"
-<<<<<<< HEAD
         android:text="Username"
-        android:layout_height="wrap_content" />
-=======
-        android:text="Full Name"
         android:layout_height="wrap_content"
         android:textColor="#f5f5ec" />
->>>>>>> 688e0641f5385f7b9677593ebffe09c82615c218
 
     <EditText
         android:id="@+id/etUsername"
@@ -39,7 +34,7 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:text=".edu E-mail"
+        android:text="E-mail"
         android:layout_height="wrap_content"
         android:textColor="#f5f5ec"
         android:paddingTop="16dp" />
