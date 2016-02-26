@@ -21,20 +21,19 @@ import java.util.List;
 public class Register extends AppCompatActivity implements View.OnClickListener {
 
     Button bRegister;
-    EditText etEmail, etPassword, etUsername;
+    EditText etEmail, etPassword, etUsername, etPasswordReEntry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-
         etUsername = (EditText) findViewById(R.id.etUsername);
         etEmail = (EditText) findViewById(R.id.etEmail);
         etPassword = (EditText) findViewById(R.id.etPassword);
+        etPasswordReEntry = (EditText) findViewById(R.id.etPasswordReEntry);
 
         bRegister = (Button) findViewById(R.id.bRegister);
-
         bRegister.setOnClickListener(this);
 
     }
@@ -44,39 +43,50 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 
         if (v.getId() == R.id.bRegister){
             String emailAddress = etEmail.getText().toString().toLowerCase();
+            if (!emailAddress.endsWith("@ucsd.edu")) {
+                etEmail.setError("Email must be an @ucsd.edu account!");
+                return;
+            }
+
+            String password = etPassword.getText().toString();
+            String passwordReEntry = etPasswordReEntry.getText().toString();
+
+            if (! password.equals(passwordReEntry)) {
+                etPasswordReEntry.setError("Passwords don't match.");
+                return;
+            }
+
+            ParseUser currentUser = ParseUser.getCurrentUser();
+            currentUser.logOut();
+            ParseUser user = new ParseUser();
+
             String username = etUsername.getText().toString().toLowerCase();
-            if (emailAddress.endsWith("@ucsd.edu")) {
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setEmail(emailAddress);
 
-                ParseUser currentUser = ParseUser.getCurrentUser();
-                currentUser.logOut();
+            user.signUpInBackground(new SignUpCallback() {
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Toast.makeText(getApplicationContext(), "Registered!", Toast.LENGTH_SHORT).show();
+                        // Hooray! Let them use the app now.
+                    } else {
 
-                ParseUser user = new ParseUser();
-                user.setUsername(username);
-                user.setPassword(etPassword.getText().toString());
-                user.setEmail(emailAddress);
-
-                user.signUpInBackground(new SignUpCallback() {
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            Toast.makeText(getApplicationContext(), "Registered!", Toast.LENGTH_SHORT).show();
-                            // Hooray! Let them use the app now.
-                        } else {
-
-                            switch (e.getCode()) {
-                                case ParseException.EMAIL_TAKEN: {
-                                    etEmail.setError("Email taken.");
-                                }
-                                case ParseException.USERNAME_TAKEN: {
-                                    etUsername.setError("Username taken.");
-                                }
+                        switch (e.getCode()) {
+                            case ParseException.EMAIL_TAKEN: {
+                                etEmail.setError("Email taken.");
+                                break;
+                            }
+                            case ParseException.USERNAME_TAKEN: {
+                                etUsername.setError("Username taken.");
+                                break;
                             }
                         }
                     }
-                });
-            }
-            else {
-                etEmail.setError("Email must be an @ucsd.edu account!");
-            }
+                }
+            });
+
+
         }
     }
 
