@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.cse110.MainActivity;
+
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
@@ -37,6 +39,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.bLogin:
+                startActivity(new Intent(this, MainActivity.class));
                 break;
             case R.id.bRegisterLink:
                 startActivity(new Intent(this, Register.class));
