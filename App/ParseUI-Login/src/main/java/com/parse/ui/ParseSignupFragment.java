@@ -24,6 +24,7 @@ package com.parse.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,9 +33,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
+
+import java.util.List;
 
 /**
  * Fragment for the user signup screen.
@@ -175,12 +182,33 @@ public class ParseSignupFragment extends ParseLoginFragmentBase implements OnCli
     } else if (name != null && name.length() == 0) {
       showToast(R.string.com_parse_ui_no_name_toast);
     } else {
+
+      String[] split= email.split("@", 2);
+      ParseQuery<ParseObject> query = ParseQuery.getQuery("School");
+      query.whereEqualTo("domain", split[split.length - 1]);
+
+      List<ParseObject> found;
+
+      try {
+        found = query.find();
+      }
+      catch (ParseException e) {
+        showToast("Sorry, but your school's domain is not supported.");
+        return;
+      }
+
+      if (found.size() == 0) {
+        showToast("Sorry, but your school's domain is not supported.");
+        return;
+      }
+
       ParseUser user = new ParseUser();
 
       // Set standard fields
       user.setUsername(username);
       user.setPassword(password);
       user.setEmail(email);
+      user.put("school", found.get(0));
 
       // Set additional custom fields only if the user filled it out
       if (name.length() != 0) {
@@ -203,7 +231,7 @@ public class ParseSignupFragment extends ParseLoginFragmentBase implements OnCli
             loadingFinish();
             if (e != null) {
               debugLog(getString(R.string.com_parse_ui_login_warning_parse_signup_failed) +
-                  e.toString());
+                      e.toString());
               switch (e.getCode()) {
                 case ParseException.INVALID_EMAIL_ADDRESS:
                   showToast(R.string.com_parse_ui_invalid_email_toast);
