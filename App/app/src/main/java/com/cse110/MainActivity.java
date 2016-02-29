@@ -1,6 +1,7 @@
 package com.cse110;
 
 import com.cse110.adapter.FeedListAdapter;
+import com.cse110.app.DispatchActivity;
 import com.cse110.app.MyApplication;
 import com.cse110.app.R;
 import com.cse110.data.FeedItem;
@@ -15,12 +16,15 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
+import android.support.v7.widget.Toolbar;
 
 import com.android.volley.Cache;
 import com.android.volley.Cache.Entry;
@@ -29,6 +33,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -37,11 +42,16 @@ public class MainActivity extends AppCompatActivity {
     private List<FeedItem> feedItems;
     private String URL_FEED = "http://api.androidhive.info/feed/feed.json";
 
+    private Toolbar toolbar;
+
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         listView = (ListView) findViewById(R.id.list);
 
@@ -50,11 +60,6 @@ public class MainActivity extends AppCompatActivity {
         listAdapter = new FeedListAdapter(this, feedItems);
         listView.setAdapter(listAdapter);
 
-
-        // just to get the look of facebook (changing background color & hiding the icon)
-//        getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#3b5998")));
-//        getActionBar().setIcon(
-//                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
         // We first check for cached request
         Cache cache = MyApplication.getInstance().getRequestQueue().getCache();
@@ -134,11 +139,29 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_logout) {
+            ParseUser.getCurrentUser().logOut();
+            startActivity(new Intent(this, DispatchActivity.class));
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 }

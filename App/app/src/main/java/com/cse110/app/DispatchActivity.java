@@ -22,14 +22,12 @@
 package com.cse110.app;
 
 import com.cse110.MainActivity;
-import com.parse.ParseUser;
 import com.parse.ui.ParseLoginDispatchActivity;
 
 public class DispatchActivity extends ParseLoginDispatchActivity {
 
     @Override
     protected Class<?> getTargetClass() {
-        ParseUser.getCurrentUser().logOut();
         return MainActivity.class;
     }
 }
