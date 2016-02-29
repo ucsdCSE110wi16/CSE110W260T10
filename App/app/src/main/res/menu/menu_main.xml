@@ -7,4 +7,12 @@
         android:orderInCategory="100"
         android:title="Logout"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_create_post"
+        android:orderInCategory="200"
+        android:title="Create Post"
+        android:icon="@drawable/ic_create_white_24dp"
+        app:showAsAction="ifRoom"
+        />
 </menu>

@@ -1,6 +1,7 @@
 package com.cse110;
 
 import com.cse110.adapter.FeedListAdapter;
+import com.cse110.app.AddPostActivity;
 import com.cse110.app.DispatchActivity;
 import com.cse110.app.MyApplication;
 import com.cse110.app.R;
@@ -20,6 +21,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         listAdapter = new FeedListAdapter(this, feedItems);
         listView.setAdapter(listAdapter);
 
+        setTitle("Hello, " + ParseUser.getCurrentUser().getUsername());
 
         // We first check for cached request
         Cache cache = MyApplication.getInstance().getRequestQueue().getCache();
@@ -158,6 +161,10 @@ public class MainActivity extends AppCompatActivity {
             ParseUser.getCurrentUser().logOut();
             startActivity(new Intent(this, DispatchActivity.class));
             finish();
+            return true;
+        }
+        else if (id == R.id.action_create_post) {
+            startActivity(new Intent(this, AddPostActivity.class));
             return true;
         }
 

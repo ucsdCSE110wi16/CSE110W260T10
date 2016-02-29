@@ -50,6 +50,10 @@
         <activity
             android:name="com.cse110.MainActivity"
             android:label="@string/app_name"/>
+
+        <activity
+            android:name="com.cse110.app.AddPostActivity"
+            android:label="Create Post"/>
     </application>
 
 </manifest>
