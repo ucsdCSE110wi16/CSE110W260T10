@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -54,6 +55,10 @@
         <activity
             android:name="com.cse110.app.AddPostActivity"
             android:label="Create Post"/>
+
+        <activity
+            android:name="com.cse110.app.UserProfileActivity"
+            android:label="User Profile"/>
     </application>
 
 </manifest>

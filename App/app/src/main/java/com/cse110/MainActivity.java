@@ -5,6 +5,7 @@ import com.cse110.app.AddPostActivity;
 import com.cse110.app.DispatchActivity;
 import com.cse110.app.MyApplication;
 import com.cse110.app.R;
+import com.cse110.app.UserProfileActivity;
 import com.cse110.data.FeedItem;
 
 import java.io.UnsupportedEncodingException;
@@ -21,6 +22,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -39,6 +41,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -46,7 +49,9 @@ import com.parse.ParseUser;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int postsPerQuery = 10;
-    static final int POST_REQUEST = 1;
+
+    static final int POST_REQUEST = 0;
+    static final int PROFILE_REQUEST = 1;
 
 
     public ListView listView;
@@ -174,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
     }
 
-
     public void addMorePosts(final int offset, final int limit) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
 
@@ -201,17 +205,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             item.setName(user.get("name").toString());
             item.setImge(null);
             item.setStatus(post.get("content").toString());
-            item.setProfilePic("http://api.androidhive.info/feed/img/nat.jpg");
+
+            String profilePicUrl = user.getParseFile("profilePicture").getUrl();
+            item.setProfilePic(profilePicUrl);
             item.setTimeStamp(String.valueOf(post.getCreatedAt().getTime()));
             item.setUrl(null);
 
             feedItems.add(item);
         }
         listAdapter.notifyDataSetChanged();
-
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -238,6 +241,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             startActivityForResult(new Intent(this, AddPostActivity.class), POST_REQUEST);
             return true;
         }
+        else if (id == R.id.action_profile) {
+            startActivityForResult(new Intent(this, UserProfileActivity.class), PROFILE_REQUEST);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -262,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == POST_REQUEST) {
+        if (requestCode == POST_REQUEST || requestCode == PROFILE_REQUEST) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 reloadPosts();

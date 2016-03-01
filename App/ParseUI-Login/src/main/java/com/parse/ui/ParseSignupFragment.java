@@ -22,6 +22,8 @@
 package com.parse.ui;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -36,11 +38,14 @@ import android.widget.ImageView;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 /**
@@ -202,13 +207,34 @@ public class ParseSignupFragment extends ParseLoginFragmentBase implements OnCli
         return;
       }
 
-      ParseUser user = new ParseUser();
+      final ParseUser user = new ParseUser();
 
       // Set standard fields
       user.setUsername(username);
       user.setPassword(password);
       user.setEmail(email);
       user.put("school", found.get(0));
+
+      // Locate the image in res > drawable-hdpi
+      Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+              R.drawable.ic_person_black_24dp);
+      // Convert it to byte
+      ByteArrayOutputStream stream = new ByteArrayOutputStream();
+      // Compress image to lower quality scale 1 - 100
+      bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+      byte[] image = stream.toByteArray();
+
+      // Create the ParseFile
+      final ParseFile file = new ParseFile("ic_person_black_24dp.png", image);
+      // Upload the image into Parse Cloud
+      file.saveInBackground(new SaveCallback() {
+        @Override
+        public void done(ParseException e) {
+          if (e == null) {
+            user.put("profilePicture", file);
+          }
+        }
+      });
 
       // Set additional custom fields only if the user filled it out
       if (name.length() != 0) {
