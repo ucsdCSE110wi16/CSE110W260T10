@@ -1,5 +1,6 @@
 package com.cse110.app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -62,6 +63,7 @@ public class AddPostActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Error: Failed to make post: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     return true;
                 }
+                setResult(Activity.RESULT_OK, new Intent());
                 finish();
             }
             return true;

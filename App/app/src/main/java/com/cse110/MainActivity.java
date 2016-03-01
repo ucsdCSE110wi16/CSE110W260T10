@@ -46,6 +46,8 @@ import com.parse.ParseUser;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int postsPerQuery = 10;
+    static final int POST_REQUEST = 1;
+
 
     public ListView listView;
     private FeedListAdapter listAdapter;
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         scrollListener = new EndlessScrollListener(this, 10);
         listView.setOnScrollListener(scrollListener);
 
-        addMorePosts(0, 10);
+        addMorePosts(0, postsPerQuery);
 
 
 //        // We first check for cached request
@@ -181,31 +183,32 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         query.setSkip(offset);
         query.include("user");
         query.setLimit(limit);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null) {
-                    for (int i = 0; i < list.size(); i++) {
-                        ParseObject post = list.get(i);
-                        FeedItem item = new FeedItem();
-                        item.setId(offset + i + 1);
-                        ParseUser user = (ParseUser) post.getParseObject("user");
-                        item.setName(user.get("name").toString());
-                        item.setImge(null);
-                        item.setStatus(post.get("content").toString());
-                        item.setProfilePic("http://api.androidhive.info/feed/img/nat.jpg");
-                        item.setTimeStamp(String.valueOf(post.getCreatedAt().getTime()));
-                        item.setUrl(null);
+        List <ParseObject> list;
 
-                        feedItems.add(item);
-                    }
-                    listAdapter.notifyDataSetChanged();
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "Error: Failed to retrieve posts: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        try {
+            list = query.find();
+        }
+        catch (ParseException e) {
+            Toast.makeText(getApplicationContext(), "Error: Failed to retrieve posts: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            ParseObject post = list.get(i);
+            FeedItem item = new FeedItem();
+            item.setId(offset + i + 1);
+            ParseUser user = (ParseUser) post.getParseObject("user");
+            item.setName(user.get("name").toString());
+            item.setImge(null);
+            item.setStatus(post.get("content").toString());
+            item.setProfilePic("http://api.androidhive.info/feed/img/nat.jpg");
+            item.setTimeStamp(String.valueOf(post.getCreatedAt().getTime()));
+            item.setUrl(null);
+
+            feedItems.add(item);
+        }
+        listAdapter.notifyDataSetChanged();
+
 
     }
 
@@ -232,11 +235,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             return true;
         }
         else if (id == R.id.action_create_post) {
-            startActivity(new Intent(this, AddPostActivity.class));
+            startActivityForResult(new Intent(this, AddPostActivity.class), POST_REQUEST);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void reloadPosts() {
+        feedItems.clear();
+        listAdapter.notifyDataSetChanged();
+        scrollListener.reset();
+        addMorePosts(0, postsPerQuery);
     }
 
     /**
@@ -244,11 +254,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
      */
     @Override public void onRefresh() {
         Toast.makeText(getApplicationContext(), "Refreshing", Toast.LENGTH_SHORT).show();
-        feedItems.clear();
-        listAdapter.notifyDataSetChanged();
-        scrollListener.reset();
-        addMorePosts(0, 10);
+        reloadPosts();
         swipeLayout.setRefreshing(false);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == POST_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                reloadPosts();
+            }
+        }
     }
 
 }
