@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.android.volley.Cache;
 import com.android.volley.Cache.Entry;
@@ -35,14 +36,23 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private ListView listView;
+    private static final int postsPerQuery = 10;
+
+    public ListView listView;
     private FeedListAdapter listAdapter;
     private List<FeedItem> feedItems;
     private String URL_FEED = "http://api.androidhive.info/feed/feed.json";
+    public SwipeRefreshLayout swipeLayout;
+    private EndlessScrollListener scrollListener;
 
     private Toolbar toolbar;
 
@@ -62,47 +72,66 @@ public class MainActivity extends AppCompatActivity {
         listAdapter = new FeedListAdapter(this, feedItems);
         listView.setAdapter(listAdapter);
 
-        setTitle("Hello, " + ParseUser.getCurrentUser().getUsername());
+        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeLayout.setOnRefreshListener(this);
 
-        // We first check for cached request
-        Cache cache = MyApplication.getInstance().getRequestQueue().getCache();
-        Entry entry = cache.get(URL_FEED);
-        if (entry != null) {
-            // fetch the data from cache
-            try {
-                String data = new String(entry.data, "UTF-8");
-                try {
-                    parseJsonFeed(new JSONObject(data));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        ParseObject school = ParseUser.getCurrentUser().getParseObject("school");
+
+        school.fetchInBackground(new GetCallback<ParseObject>() {
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+                    setTitle(object.getString("name"));
+                } else {
+                    setTitle("Hi, " + ParseUser.getCurrentUser().getString("name") + "!");
                 }
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
             }
+        });
 
-        } else {
-            // making fresh volley request and getting json
-            JsonObjectRequest jsonReq = new JsonObjectRequest(Method.GET,
-                    URL_FEED, null, new Response.Listener<JSONObject>() {
+        scrollListener = new EndlessScrollListener(this, 10);
+        listView.setOnScrollListener(scrollListener);
 
-                @Override
-                public void onResponse(JSONObject response) {
-                    VolleyLog.d(TAG, "Response: " + response.toString());
-                    if (response != null) {
-                        parseJsonFeed(response);
-                    }
-                }
-            }, new Response.ErrorListener() {
+        addMorePosts(0, 10);
 
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.d(TAG, "Error: " + error.getMessage());
-                }
-            });
 
-            // Adding request to volley request queue
-            MyApplication.getInstance().addToRequestQueue(jsonReq);
-        }
+//        // We first check for cached request
+//        Cache cache = MyApplication.getInstance().getRequestQueue().getCache();
+//        Entry entry = cache.get(URL_FEED);
+//        if (entry != null) {
+//            // fetch the data from cache
+//            try {
+//                String data = new String(entry.data, "UTF-8");
+//                try {
+//                    parseJsonFeed(new JSONObject(data));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+//
+//        } else {
+//            // making fresh volley request and getting json
+//            JsonObjectRequest jsonReq = new JsonObjectRequest(Method.GET,
+//                    URL_FEED, null, new Response.Listener<JSONObject>() {
+//
+//                @Override
+//                public void onResponse(JSONObject response) {
+//                    VolleyLog.d(TAG, "Response: " + response.toString());
+//                    if (response != null) {
+//                        parseJsonFeed(response);
+//                    }
+//                }
+//            }, new Response.ErrorListener() {
+//
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    VolleyLog.d(TAG, "Error: " + error.getMessage());
+//                }
+//            });
+//
+//            // Adding request to volley request queue
+//            MyApplication.getInstance().addToRequestQueue(jsonReq);
+//        }
 
     }
 
@@ -142,6 +171,45 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
+    public void addMorePosts(final int offset, final int limit) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+
+        query.whereEqualTo("school", ParseUser.getCurrentUser().get("school"));
+        query.orderByDescending("createdAt");
+        query.setSkip(offset);
+        query.include("user");
+        query.setLimit(limit);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < list.size(); i++) {
+                        ParseObject post = list.get(i);
+                        FeedItem item = new FeedItem();
+                        item.setId(offset + i + 1);
+                        ParseUser user = (ParseUser) post.getParseObject("user");
+                        item.setName(user.get("name").toString());
+                        item.setImge(null);
+                        item.setStatus(post.get("content").toString());
+                        item.setProfilePic("http://api.androidhive.info/feed/img/nat.jpg");
+                        item.setTimeStamp(String.valueOf(post.getCreatedAt().getTime()));
+                        item.setUrl(null);
+
+                        feedItems.add(item);
+                    }
+                    listAdapter.notifyDataSetChanged();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Error: Failed to retrieve posts: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -169,6 +237,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * It must be overriden by parent classes if manual swipe is enabled.
+     */
+    @Override public void onRefresh() {
+        Toast.makeText(getApplicationContext(), "Refreshing", Toast.LENGTH_SHORT).show();
+        feedItems.clear();
+        listAdapter.notifyDataSetChanged();
+        scrollListener.reset();
+        addMorePosts(0, 10);
+        swipeLayout.setRefreshing(false);
     }
 
 }
