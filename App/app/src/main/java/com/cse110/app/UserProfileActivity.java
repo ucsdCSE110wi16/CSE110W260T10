@@ -71,20 +71,6 @@ public class UserProfileActivity extends AppCompatActivity {
         tvMajor = (TextView) findViewById(R.id.major);
         displayMajor();
 
-        tvMajor.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                final EditText input = new EditText(this);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Enter Major");
-
-                builder.setPo;
-            }
-
-        }
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
