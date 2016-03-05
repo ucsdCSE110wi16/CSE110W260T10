@@ -14,8 +14,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.EditText;
+import android.app.AlertDialog;
 
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -35,6 +38,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private ParseImageView profilePictureView;
     private TextView tvDisplayName;
     private TextView tvMajor;
+    private EditText input;
 
 
     @SuppressLint("NewApi")
@@ -54,6 +58,15 @@ public class UserProfileActivity extends AppCompatActivity {
 
         tvMajor = (TextView) findViewById(R.id.major);
         displayMajor();
+
+        tvMajor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(v).creat();
+
+
+            }
+        });
 
     }
 

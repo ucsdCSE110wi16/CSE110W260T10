@@ -42,7 +42,10 @@
                 android:layout_height="wrap_content"
                 android:textSize="18dp"
                 android:id="@+id/major"
+                android:onClick="onClick"
+                android:clickable="true"
                 android:gravity="left">
+
             </TextView>
 
         </LinearLayout>
