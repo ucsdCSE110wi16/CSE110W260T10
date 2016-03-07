@@ -60,24 +60,39 @@ public class UserProfileActivity extends AppCompatActivity {
         tvMajor = (TextView) findViewById(R.id.major);
         displayMajor();
 
+        createMajorAlert();
+        createDisplayNameAlert();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Type in major");
+    }
+
+    public void createMajorAlert() {
+        final AlertDialog.Builder majorAlertBuilder = new AlertDialog.Builder(this);
+        majorAlertBuilder.setMessage("Type in major");
 
         input = new EditText(this);
-        builder.setView(input);
+        majorAlertBuilder.setView(input);
 
         //Set positive button
-        builder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
+        majorAlertBuilder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String txt = input.getText().toString();
+                ParseUser.getCurrentUser().put("major", txt);
+                ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            displayMajor();
+                        }
+                    }
+                });
+
             }
 
         });
 
         //Set negative button
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        majorAlertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -85,16 +100,61 @@ public class UserProfileActivity extends AppCompatActivity {
 
         });
 
-        final AlertDialog ad = builder.create();
+        final AlertDialog majorAlertDialog = majorAlertBuilder.create();
 
         //set listener for the EditText major box.
         tvMajor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ad.show();
+                majorAlertDialog.show();
             }
         });
+    }
 
+    public void createDisplayNameAlert() {
+        final AlertDialog.Builder displayNameBuilder = new AlertDialog.Builder(this);
+        displayNameBuilder.setMessage("Type in full name");
+
+        input = new EditText(this);
+        displayNameBuilder.setView(input);
+
+        //Set positive button
+        displayNameBuilder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String txt = input.getText().toString();
+                ParseUser.getCurrentUser().put("name", txt);
+                ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            displayDisplayName();
+                        }
+                    }
+                });
+
+            }
+
+        });
+
+        //Set negative button
+        displayNameBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+
+        });
+
+        final AlertDialog displayNameAlertDialog = displayNameBuilder.create();
+
+        //set listener for the EditText major box.
+        tvDisplayName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayNameAlertDialog.show();
+            }
+        });
     }
 
     public void displayProfilePicture() {
