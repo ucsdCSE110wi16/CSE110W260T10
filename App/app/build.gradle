@@ -27,5 +27,4 @@ dependencies {
     compile 'com.android.support:design:23.2.0'
     compile files('lib/volley.jar')
     compile project(':ParseUI-Widget')
-    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 }
