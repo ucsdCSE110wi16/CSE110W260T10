@@ -17,7 +17,9 @@ public class DispatchTest {
 
     private String mStringToBetyped;
 
-
+    @Rule
+    public ActivityTestRule<DispatchActivity> mActivityRule = new ActivityTestRule<>(
+            DispatchActivity.class);
 
 // make the tester tyoe in and input a valid string
     @Before
