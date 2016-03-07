@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -28,4 +29,7 @@ dependencies {
     compile files('lib/volley.jar')
     compile project(':ParseUI-Widget')
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.android.support.test:runner:0.4.1'
+    androidTestCompile 'junit:junit:4.12'
 }
