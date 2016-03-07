@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             for (int i = 0; i < feedArray.length(); i++) {
                 JSONObject feedObj = (JSONObject) feedArray.get(i);
-
+                
                 FeedItem item = new FeedItem();
                 item.setId(feedObj.getInt("id"));
                 item.setName(feedObj.getString("name"));

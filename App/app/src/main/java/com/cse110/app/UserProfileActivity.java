@@ -14,10 +14,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseImageView;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -28,6 +32,9 @@ public class UserProfileActivity extends AppCompatActivity {
     static final int REQUEST_PHOTO_FROM_GALLERY = 0;
 
     private Toolbar toolbar;
+    private ParseImageView profilePictureView;
+    private TextView tvDisplayName;
+    private TextView tvMajor;
 
 
     @SuppressLint("NewApi")
@@ -39,6 +46,36 @@ public class UserProfileActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        profilePictureView = (ParseImageView) findViewById(R.id.profilePic);
+        displayProfilePicture();
+
+        tvDisplayName = (TextView) findViewById(R.id.displayName);
+        displayDisplayName();
+
+        tvMajor = (TextView) findViewById(R.id.major);
+        displayMajor();
+
+    }
+
+    public void displayProfilePicture() {
+        ParseFile parseFile = ParseUser.getCurrentUser().getParseFile("profilePicture");
+        profilePictureView.setParseFile(parseFile);
+        profilePictureView.loadInBackground();
+    }
+
+    public void displayDisplayName() {
+        String displayName = ParseUser.getCurrentUser().getString("name");
+        tvDisplayName.setText(displayName);
+    }
+
+    public void displayMajor() {
+        String major = ParseUser.getCurrentUser().getString("major");
+        if (major != null) {
+            tvMajor.setText(major);
+        }
+        else {
+            tvMajor.setText("Click here to select major.");
+        }
     }
 
     public void dispatchPhotoGallaryIntent() {
