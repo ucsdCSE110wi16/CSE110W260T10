@@ -30,6 +30,9 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 public class UserProfileActivity extends AppCompatActivity {
@@ -200,15 +203,16 @@ public class UserProfileActivity extends AppCompatActivity {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null,
-                        null, null);
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
+                Bitmap bitmap;
 
-                Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                }
+                catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Error: Failed to get image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] image = stream.toByteArray();
@@ -219,6 +223,7 @@ public class UserProfileActivity extends AppCompatActivity {
                         if (e == null) {
                             ParseUser currentUser = ParseUser.getCurrentUser();
                             currentUser.put("profilePicture", file);
+                            displayProfilePicture();
                             currentUser.saveInBackground();
                         } else {
                             Toast.makeText(getApplicationContext(), "Error: Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
