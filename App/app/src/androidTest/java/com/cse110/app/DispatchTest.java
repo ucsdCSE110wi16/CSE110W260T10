@@ -17,16 +17,16 @@ public class DispatchTest {
 
     private String mStringToBetyped;
 
-    @Rule
-    public ActivityTestRule<DispatchActivity> mActivityRule = new ActivityTestRule<>(
-            DispatchActivity.class);
 
+
+// make the tester tyoe in and input a valid string
     @Before
     public void initValidString() {
         // Specify a valid string.
         mStringToBetyped = "Espresso";
     }
 
+// After inputting a valid string, test it and try to login
     @Test
     public void testSignUpThenLogin() {
         // Type text and then press the button.
