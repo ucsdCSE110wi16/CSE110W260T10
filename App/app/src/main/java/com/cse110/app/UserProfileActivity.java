@@ -21,11 +21,13 @@ import android.widget.EditText;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
+import com.cse110.ContentActivity;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseImageView;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -35,10 +37,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class UserProfileActivity extends AppCompatActivity {
+public class UserProfileActivity extends ContentActivity {
     static final int REQUEST_PHOTO_FROM_GALLERY = 0;
 
-    private Toolbar toolbar;
     private ParseImageView profilePictureView;
     private TextView tvDisplayName;
     private TextView tvMajor;
@@ -50,7 +51,9 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        buildActivityFeed();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         profilePictureView = (ParseImageView) findViewById(R.id.profilePic);
@@ -65,6 +68,18 @@ public class UserProfileActivity extends AppCompatActivity {
         createMajorAlert();
         createDisplayNameAlert();
 
+    }
+
+    @Override
+    public void addMorePosts(int offset, int limit) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
+        query.orderByDescending("createdAt");
+        query.setSkip(offset);
+        query.include("user");
+        query.setLimit(limit);
+        fetchPosts(offset, query);
     }
 
     public void createMajorAlert() {
@@ -82,6 +97,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 ParseUser.getCurrentUser().put("major", txt);
                 ParseUser.getCurrentUser().saveInBackground();
                 displayMajor();
+                reloadPosts();
 
             }
 
@@ -122,6 +138,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 ParseUser.getCurrentUser().put("name", txt);
                 ParseUser.getCurrentUser().saveInBackground();
                 displayDisplayName();
+                reloadPosts();
 
             }
 
@@ -225,6 +242,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             currentUser.put("profilePicture", file);
                             displayProfilePicture();
                             currentUser.saveInBackground();
+                            reloadPosts();
                         } else {
                             Toast.makeText(getApplicationContext(), "Error: Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }

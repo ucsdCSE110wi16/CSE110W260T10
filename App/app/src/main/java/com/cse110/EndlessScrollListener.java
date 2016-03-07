@@ -12,12 +12,13 @@ public class EndlessScrollListener implements OnScrollListener {
     private int visibleThreshold = 5;
     private int currentPage = 0;
     private int previousTotal = 0;
-    private Activity activity;
+    private ContentActivity activity;
     private boolean loading = true;
 
     public EndlessScrollListener() {
     }
-    public EndlessScrollListener(MainActivity activity, int visibleThreshold) {
+
+    public EndlessScrollListener(ContentActivity activity, int visibleThreshold) {
         this.visibleThreshold = visibleThreshold;
         this.activity = activity;
     }
@@ -33,18 +34,18 @@ public class EndlessScrollListener implements OnScrollListener {
                 currentPage++;
             }
 
-            ListView guidesList = ((MainActivity) activity).listView;
+            ListView guidesList =  activity.listView;
             int topRowVerticalPosition = (guidesList == null || guidesList.getChildCount() == 0) ?
                     0 : guidesList.getChildAt(0).getTop();
 
-            ((MainActivity) activity).swipeLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+            activity.swipeLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
 
 
         }
         else if ((totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
                 // I load the next page of gigs using a background task,
                 // but you can call any function here.
-                ((MainActivity) activity).addMorePosts(previousTotal, 10);
+                activity.addMorePosts(previousTotal, 10);
                 loading = true;
                 Log.d("post", "fetched posts.");
 
