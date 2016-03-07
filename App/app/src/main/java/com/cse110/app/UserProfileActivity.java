@@ -39,7 +39,6 @@ public class UserProfileActivity extends AppCompatActivity {
     private ParseImageView profilePictureView;
     private TextView tvDisplayName;
     private TextView tvMajor;
-    private EditText input;
 
 
     @SuppressLint("NewApi")
@@ -69,7 +68,7 @@ public class UserProfileActivity extends AppCompatActivity {
         final AlertDialog.Builder majorAlertBuilder = new AlertDialog.Builder(this);
         majorAlertBuilder.setMessage("Type in major");
 
-        input = new EditText(this);
+        final EditText input = new EditText(this);
         majorAlertBuilder.setView(input);
 
         //Set positive button
@@ -78,14 +77,8 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String txt = input.getText().toString();
                 ParseUser.getCurrentUser().put("major", txt);
-                ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            displayMajor();
-                        }
-                    }
-                });
+                ParseUser.getCurrentUser().saveInBackground();
+                displayMajor();
 
             }
 
@@ -115,7 +108,7 @@ public class UserProfileActivity extends AppCompatActivity {
         final AlertDialog.Builder displayNameBuilder = new AlertDialog.Builder(this);
         displayNameBuilder.setMessage("Type in full name");
 
-        input = new EditText(this);
+        final EditText input = new EditText(this);
         displayNameBuilder.setView(input);
 
         //Set positive button
@@ -124,14 +117,8 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String txt = input.getText().toString();
                 ParseUser.getCurrentUser().put("name", txt);
-                ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            displayDisplayName();
-                        }
-                    }
-                });
+                ParseUser.getCurrentUser().saveInBackground();
+                displayDisplayName();
 
             }
 
@@ -170,7 +157,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     public void displayMajor() {
         String major = ParseUser.getCurrentUser().getString("major");
-        if (major != null) {
+        if (major != null && major.length() > 0) {
             tvMajor.setText(major);
         }
         else {
