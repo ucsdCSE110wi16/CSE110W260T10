@@ -14,8 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.EditText;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -35,6 +39,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private ParseImageView profilePictureView;
     private TextView tvDisplayName;
     private TextView tvMajor;
+    private EditText input;
 
 
     @SuppressLint("NewApi")
@@ -54,6 +59,41 @@ public class UserProfileActivity extends AppCompatActivity {
 
         tvMajor = (TextView) findViewById(R.id.major);
         displayMajor();
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Type in major");
+
+        input = new EditText(this);
+        builder.setView(input);
+
+        //Set positive button
+        builder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String txt = input.getText().toString();
+            }
+
+        });
+
+        //Set negative button
+        builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+
+        });
+
+        final AlertDialog ad = builder.create();
+
+        //set listener for the EditText major box.
+        tvMajor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ad.show();
+            }
+        });
 
     }
 
