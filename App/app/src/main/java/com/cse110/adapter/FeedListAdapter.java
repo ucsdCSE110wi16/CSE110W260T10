@@ -125,7 +125,7 @@ public class FeedListAdapter extends BaseAdapter {
 
         // Favorite button
         if (item.userLiked()) {
-            favoriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_18dp, 0, 0, 0);
+            favoriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic__favorite, 0, 0, 0);
         }
         else {
             favoriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_18dp, 0, 0, 0);
@@ -153,7 +153,7 @@ public class FeedListAdapter extends BaseAdapter {
                         return;
                     }
                     item.setUserLikeActivity(activity);
-                    favoriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_18dp, 0, 0, 0);
+                    favoriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic__favorite, 0, 0, 0);
                     item.setFavorites(item.getFavorites() + 1);
                     favoriteButton.setText(Integer.toString(item.getFavorites()));
                 }
