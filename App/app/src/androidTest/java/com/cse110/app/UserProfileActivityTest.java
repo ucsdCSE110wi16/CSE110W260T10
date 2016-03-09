@@ -1,5 +1,9 @@
 package com.cse110.app;
 
+/**
+ * Created by Kevin on 3/8/16.
+ */
+
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.assertion.ViewAssertions;
@@ -28,16 +32,16 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class DispatchActivityTest extends ActivityInstrumentationTestCase2<DispatchActivity> {
+public class UserProfileActivityTest extends ActivityInstrumentationTestCase2<DispatchActivity> {
 
     private static final String usernametest = "kevinwong";
     private static final String passwordtest = usernametest;
 
     @Rule
-    public ActivityTestRule<DispatchActivity> mActivityRule = new ActivityTestRule<>(DispatchActivity.class);
+    public ActivityTestRule<UserProfileActivity> mActivityRule = new ActivityTestRule<>(UserProfileActivity.class);
 
-    public DispatchActivityTest() {
-        super(DispatchActivity.class);
+    public UserProfileActivityTest() {
+        super(UserProfileActivity.class);
     }
 
     @Override
