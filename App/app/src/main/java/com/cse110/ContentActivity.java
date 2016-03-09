@@ -76,74 +76,75 @@ public abstract class ContentActivity extends AppCompatActivity implements Swipe
 
     protected void fetchPosts(final int offset,  ParseQuery<ParseObject> query) {
         query.include("user");
-        List <ParseObject> list;
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e != null) {
+                    Toast.makeText(getApplicationContext(), "Error: Failed to retrieve posts: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-        try {
-            list = query.find();
-        }
-        catch (ParseException e) {
-            Toast.makeText(getApplicationContext(), "Error: Failed to retrieve posts: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        for (int i = 0; i < list.size(); i++) {
-            ParseObject post = list.get(i);
-            FeedItem item = new FeedItem();
-            item.setId(offset + i + 1);
-            ParseUser user = (ParseUser) post.getParseObject("user");
-            item.setUser(user);
-            item.setPost(post);
-            item.setName(user.get("name").toString());
-            item.setImge(null);
-            item.setStatus(post.get("content").toString());
+                for (int i = 0; i < list.size(); i++) {
+                    ParseObject post = list.get(i);
+                    FeedItem item = new FeedItem();
+                    item.setId(offset + i + 1);
+                    ParseUser user = (ParseUser) post.getParseObject("user");
+                    item.setUser(user);
+                    item.setPost(post);
+                    item.setName(user.get("name").toString());
+                    item.setImge(null);
+                    item.setStatus(post.get("content").toString());
 
-            ParseQuery<ParseObject> queryActivities = ParseQuery.getQuery("Activity");
-            queryActivities.whereEqualTo("post", post);
-            queryActivities.include("fromUser");
-            List<ParseObject> activities;
-            try {
-                activities = queryActivities.find();
-            } catch (ParseException e2) {
-                activities = new ArrayList<>();
-                Toast.makeText(getApplicationContext(), "Error: Failed to get likes for post:" + e2.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-
-            int favorites = 0;
-            int comments = 0;
-            for (int j = 0; j < activities.size(); j++) {
-                ParseObject activity = activities.get(j);
-                String type = activity.getString("type");
-                if (type.equals("favorite")) {
-                    String fromUser = activity.getParseUser("fromUser").getUsername();
-                    String currentUser = ParseUser.getCurrentUser().getUsername();
-                    if (currentUser.equals(fromUser)) {
-                        item.removeUserLikeActivity();
-                        item.setUserLikeActivity(activity);
+                    ParseQuery<ParseObject> queryActivities = ParseQuery.getQuery("Activity");
+                    queryActivities.whereEqualTo("post", post);
+                    queryActivities.include("fromUser");
+                    List<ParseObject> activities;
+                    try {
+                        activities = queryActivities.find();
+                    } catch (ParseException e2) {
+                        activities = new ArrayList<>();
+                        Toast.makeText(getApplicationContext(), "Error: Failed to get likes for post:" + e2.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                    favorites++;
+
+                    int favorites = 0;
+                    int comments = 0;
+                    for (int j = 0; j < activities.size(); j++) {
+                        ParseObject activity = activities.get(j);
+                        String type = activity.getString("type");
+                        if (type.equals("favorite")) {
+                            String fromUser = activity.getParseUser("fromUser").getUsername();
+                            String currentUser = ParseUser.getCurrentUser().getUsername();
+                            if (currentUser.equals(fromUser)) {
+                                item.removeUserLikeActivity();
+                                item.setUserLikeActivity(activity);
+                            }
+                            favorites++;
+                        }
+                        else {
+                            comments++;
+                        }
+                    }
+
+                    item.setFavorites(favorites);
+                    item.setComments(comments);
+
+                    String major = user.getString("major");
+
+                    if (major != null && major.length() > 0)
+                        item.setMajor(major);
+
+                    String profilePicUrl = user.getParseFile("profilePicture").getUrl();
+                    item.setProfilePic(profilePicUrl);
+                    item.setTimeStamp(String.valueOf(post.getCreatedAt().getTime()));
+                    item.setUrl(null);
+
+                    feedItems.add(item);
                 }
-                else {
-                    comments++;
-                }
+
+                listAdapter.notifyDataSetChanged();
             }
-
-            item.setFavorites(favorites);
-            item.setComments(comments);
-
-            String major = user.getString("major");
-
-            if (major != null && major.length() > 0)
-                item.setMajor(major);
-
-            String profilePicUrl = user.getParseFile("profilePicture").getUrl();
-            item.setProfilePic(profilePicUrl);
-            item.setTimeStamp(String.valueOf(post.getCreatedAt().getTime()));
-            item.setUrl(null);
-
-            feedItems.add(item);
-        }
-
-        listAdapter.notifyDataSetChanged();
+        });
     }
 
     /**
