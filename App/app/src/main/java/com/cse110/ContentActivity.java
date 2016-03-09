@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.cse110.adapter.FeedListAdapter;
 import com.cse110.app.R;
 import com.cse110.data.FeedItem;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -24,10 +25,10 @@ public abstract class ContentActivity extends AppCompatActivity implements Swipe
     private static final int POSTS_PER_QUERY = 10;
 
     public ListView listView;
-    private FeedListAdapter listAdapter;
-    private List<FeedItem> feedItems;
+    protected FeedListAdapter listAdapter;
+    protected List<FeedItem> feedItems;
     public SwipeRefreshLayout swipeLayout;
-    private EndlessScrollListener scrollListener;
+    protected EndlessScrollListener scrollListener;
 
     @SuppressLint("NewApi")
     @Override
@@ -74,6 +75,7 @@ public abstract class ContentActivity extends AppCompatActivity implements Swipe
     public abstract void addMorePosts(final int offset, final int limit);
 
     protected void fetchPosts(final int offset,  ParseQuery<ParseObject> query) {
+        query.include("user");
         List <ParseObject> list;
 
         try {
@@ -89,9 +91,49 @@ public abstract class ContentActivity extends AppCompatActivity implements Swipe
             FeedItem item = new FeedItem();
             item.setId(offset + i + 1);
             ParseUser user = (ParseUser) post.getParseObject("user");
+            item.setUser(user);
+            item.setPost(post);
             item.setName(user.get("name").toString());
             item.setImge(null);
             item.setStatus(post.get("content").toString());
+
+            ParseQuery<ParseObject> queryActivities = ParseQuery.getQuery("Activity");
+            queryActivities.whereEqualTo("post", post);
+            queryActivities.include("fromUser");
+            List<ParseObject> activities;
+            try {
+                activities = queryActivities.find();
+            } catch (ParseException e2) {
+                activities = new ArrayList<>();
+                Toast.makeText(getApplicationContext(), "Error: Failed to get likes for post:" + e2.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+            int favorites = 0;
+            int comments = 0;
+            for (int j = 0; j < activities.size(); j++) {
+                ParseObject activity = activities.get(j);
+                String type = activity.getString("type");
+                if (type.equals("favorite")) {
+                    String fromUser = activity.getParseUser("fromUser").getUsername();
+                    String currentUser = ParseUser.getCurrentUser().getUsername();
+                    if (currentUser.equals(fromUser)) {
+                        item.removeUserLikeActivity();
+                        item.setUserLikeActivity(activity);
+                    }
+                    favorites++;
+                }
+                else {
+                    comments++;
+                }
+            }
+
+            item.setFavorites(favorites);
+            item.setComments(comments);
+
+            String major = user.getString("major");
+
+            if (major != null && major.length() > 0)
+                item.setMajor(major);
 
             String profilePicUrl = user.getParseFile("profilePicture").getUrl();
             item.setProfilePic(profilePicUrl);
@@ -100,6 +142,8 @@ public abstract class ContentActivity extends AppCompatActivity implements Swipe
 
             feedItems.add(item);
         }
+
+        listAdapter.notifyDataSetChanged();
     }
 
     /**

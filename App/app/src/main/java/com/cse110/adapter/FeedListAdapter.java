@@ -9,6 +9,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -17,10 +19,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 public class FeedListAdapter extends BaseAdapter {
     private Activity activity;
@@ -61,6 +68,7 @@ public class FeedListAdapter extends BaseAdapter {
             imageLoader = MyApplication.getInstance().getImageLoader();
 
         TextView name = (TextView) convertView.findViewById(R.id.name);
+        TextView major = (TextView) convertView.findViewById(R.id.major);
         TextView timestamp = (TextView) convertView
                 .findViewById(R.id.timestamp);
         TextView statusMsg = (TextView) convertView
@@ -71,9 +79,18 @@ public class FeedListAdapter extends BaseAdapter {
         FeedImageView feedImageView = (FeedImageView) convertView
                 .findViewById(R.id.feedImage1);
 
-        FeedItem item = feedItems.get(position);
+        final FeedItem item = feedItems.get(position);
+
+        final Button favoriteButton = (Button) convertView.findViewById(R.id.favoriteButton);
 
         name.setText(item.getName());
+
+        if (item.getMajor() != null) {
+            major.setVisibility(View.VISIBLE);
+            major.setText(item.getMajor());
+        }
+        else
+            major.setVisibility(View.GONE);
 
         // Converting timestamp into x ago format
         CharSequence timeAgo = DateUtils.getRelativeTimeSpanString(
@@ -105,6 +122,43 @@ public class FeedListAdapter extends BaseAdapter {
 
         // user profile pic
         profilePic.setImageUrl(item.getProfilePic(), imageLoader);
+
+        // Favorite button
+        if (item.userLiked()) {
+            favoriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_18dp, 0, 0, 0);
+        }
+        else {
+            favoriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_18dp, 0, 0, 0);
+        }
+
+        favoriteButton.setText(Integer.toString(item.getFavorites()));
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (item.userLiked()) {
+                    item.removeUserLikeActivity();
+                    favoriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_18dp, 0, 0, 0);
+                    item.setFavorites(item.getFavorites() - 1);
+                    favoriteButton.setText(Integer.toString(item.getFavorites()));
+                } else {
+                    final ParseObject activity = new ParseObject("Activity");
+                    activity.put("fromUser", ParseUser.getCurrentUser());
+                    activity.put("toUser", item.getUser());
+                    activity.put("post", item.getPost());
+                    activity.put("type", "favorite");
+                    try {
+                        activity.save();
+                    } catch (ParseException e) {
+                        return;
+                    }
+                    item.setUserLikeActivity(activity);
+                    favoriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_18dp, 0, 0, 0);
+                    item.setFavorites(item.getFavorites() + 1);
+                    favoriteButton.setText(Integer.toString(item.getFavorites()));
+                }
+            }
+        });
 
         // Feed image
         if (item.getImge() != null) {

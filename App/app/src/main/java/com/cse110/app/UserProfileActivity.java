@@ -15,6 +15,8 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.EditText;
@@ -77,23 +79,34 @@ public class UserProfileActivity extends ContentActivity {
         query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.orderByDescending("createdAt");
         query.setSkip(offset);
-        query.include("user");
         query.setLimit(limit);
         fetchPosts(offset, query);
     }
 
     public void createMajorAlert() {
         final AlertDialog.Builder majorAlertBuilder = new AlertDialog.Builder(this);
-        majorAlertBuilder.setMessage("Type in major");
+        majorAlertBuilder.setMessage("Select your major");
 
-        final EditText input = new EditText(this);
+        ParseObject school = ParseUser.getCurrentUser().getParseObject("school");
+        String majors[] = school.getString("offeredMajors").split("\\r?\\n");
+        String currentMajor = ParseUser.getCurrentUser().getString("major");
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, majors);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        int majorId = dataAdapter.getPosition(currentMajor);
+
+
+        final Spinner input = new Spinner(this);
+        input.setAdapter(dataAdapter);
+        input.setSelection(majorId);
         majorAlertBuilder.setView(input);
 
         //Set positive button
         majorAlertBuilder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String txt = input.getText().toString();
+                String txt = input.getSelectedItem().toString();
                 ParseUser.getCurrentUser().put("major", txt);
                 ParseUser.getCurrentUser().saveInBackground();
                 displayMajor();
@@ -261,5 +274,12 @@ public class UserProfileActivity extends ContentActivity {
             finish();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void reloadPosts() {
+        super.reloadPosts();
+        displayDisplayName();
+        displayMajor();
     }
 }

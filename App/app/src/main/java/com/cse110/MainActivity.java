@@ -41,7 +41,6 @@ public class MainActivity extends ContentActivity {
         query.whereEqualTo("school", ParseUser.getCurrentUser().get("school"));
         query.orderByDescending("createdAt");
         query.setSkip(offset);
-        query.include("user");
         query.setLimit(limit);
         fetchPosts(offset, query);
     }
