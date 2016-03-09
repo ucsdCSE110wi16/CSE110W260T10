@@ -47,12 +47,11 @@ public class DispatchActivityTest extends ActivityInstrumentationTestCase2<Dispa
     }
 
     @Test
-    public void TestLogin () {
+    public void TestLogin() {
         onView(ViewMatchers.withId(R.id.login_username_input)).perform(ViewActions.typeText(usernametest));
         onView(ViewMatchers.withId(R.id.login_password_input)).perform(ViewActions.typeText(passwordtest));
         onView(ViewMatchers.withId(R.id.parse_login_button)).perform(ViewActions.click());
 
     }
-
 
 }

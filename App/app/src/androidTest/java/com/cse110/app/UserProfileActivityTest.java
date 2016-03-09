@@ -48,11 +48,8 @@ public class UserProfileActivityTest extends ActivityInstrumentationTestCase2<Us
     }
 
     @Test
-    public void TestLogin () {
-        onView(ViewMatchers.withId(R.id.login_username_input)).perform(ViewActions.typeText(usernametest));
-        onView(ViewMatchers.withId(R.id.login_password_input)).perform(ViewActions.typeText(passwordtest));
-        onView(ViewMatchers.withId(R.id.parse_login_button)).perform(ViewActions.click());
-
+    public void SetUserName () {
+        
     }
 
 
