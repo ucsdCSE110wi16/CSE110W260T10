@@ -32,10 +32,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class UserProfileActivityTest extends ActivityInstrumentationTestCase2<DispatchActivity> {
-
-    private static final String usernametest = "kevinwong";
-    private static final String passwordtest = usernametest;
+public class UserProfileActivityTest extends ActivityInstrumentationTestCase2<UserProfileActivity> {
 
     @Rule
     public ActivityTestRule<UserProfileActivity> mActivityRule = new ActivityTestRule<>(UserProfileActivity.class);
