@@ -89,12 +89,15 @@ public abstract class ContentActivity extends AppCompatActivity implements Swipe
                     ParseObject post = list.get(i);
                     FeedItem item = new FeedItem();
                     item.setId(offset + i + 1);
-                    ParseUser user = (ParseUser) post.getParseObject("user");
+                    ParseUser user = post.getParseUser("user");
+                    if (user == null) {
+                        continue;
+                    }
                     item.setUser(user);
                     item.setPost(post);
-                    item.setName(user.get("name").toString());
+                    item.setName(user.getString("name"));
                     item.setImge(null);
-                    item.setStatus(post.get("content").toString());
+                    item.setStatus(post.getString("content"));
 
                     ParseQuery<ParseObject> queryActivities = ParseQuery.getQuery("Activity");
                     queryActivities.whereEqualTo("post", post);
